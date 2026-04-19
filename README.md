@@ -2,6 +2,8 @@
 
 Lightweight macOS live system monitor in a compact floating HUD.
 
+Korean version: [README.ko.md](README.ko.md)
+
 ## Overview
 
 `gtop` is a menu bar utility for macOS that shows live system status in a small, fast HUD.
@@ -94,7 +96,3 @@ In development builds, macOS may reject registration depending on signing and ap
 - Local-only utility, no telemetry
 - The current build may show an asset catalog warning for missing `AccentColor`; this does not block the app
 - The HUD is intentionally compact and utility-focused rather than highly configurable
-
-## Korean README
-
-See `README.ko.md`.

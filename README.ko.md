@@ -2,6 +2,8 @@
 
 작고 빠른 HUD 형태의 macOS 실시간 시스템 모니터링 유틸리티입니다.
 
+English version: [README.md](README.md)
+
 ## 개요
 
 `gtop`은 macOS 메뉴바에서 동작하는 유틸리티로, 주요 시스템 상태를 작은 플로팅 HUD로 보여줍니다.
@@ -94,7 +96,3 @@ ruby tools/generate_xcodeproj.rb
 - 로컬 전용 유틸리티이며 텔레메트리를 전송하지 않습니다
 - 현재 asset catalog에서 `AccentColor` 경고가 보일 수 있지만 앱 동작에는 영향이 없습니다
 - HUD는 설정이 많은 앱보다는 작고 빠른 유틸리티 방향에 맞춰 설계되어 있습니다
-
-## English README
-
-영문 문서는 `README.md`를 참고하세요.
