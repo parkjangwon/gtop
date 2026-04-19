@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+
+      - name: Install project generator dependency
+        run: gem install xcodeproj
+
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: Regenerate Xcode project
+        run: ruby tools/generate_xcodeproj.rb
+
+      - name: Run lint
+        run: swiftlint lint --strict .
+
+      - name: Run tests
+        run: xcodebuild -project gtop.xcodeproj -scheme gtop test
+
+      - name: Verify DMG packaging script
+        run: bash tools/test_create_dmg.sh

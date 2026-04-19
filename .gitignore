@@ -2,6 +2,7 @@
 .openchrome/
 
 build/
+dist/
 DerivedData/
 
 *.xcresult
