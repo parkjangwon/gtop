@@ -1,0 +1,127 @@
+{
+  "harness_version": 2,
+  "_file_role": "durable_project_contract",
+  "shared_contract_fields": [
+    "communication_language",
+    "project_type",
+    "definition_of_done",
+    "change_posture",
+    "change_guardrails",
+    "verification_policy",
+    "approval_policy",
+    "project_commands",
+    "project_constraints",
+    "rule_strengths",
+    "communication_tone",
+    "stack_summary",
+    "environment"
+  ],
+  "communication_language": "ko",
+  "project_type": "webapp",
+  "definition_of_done": "working_code_verified",
+  "change_posture": "aggressive",
+  "change_guardrails": [
+    "treat system permission changes as sensitive",
+    "treat background or auto-start behavior changes as sensitive",
+    "do not add outbound data transmission or telemetry without explicit product need",
+    "do not introduce real secrets, hardcoded keys, or debug backdoors"
+  ],
+  "verification_policy": "required",
+  "approval_policy": "implicit_for_safe_changes",
+  "project_commands": {
+    "dev": "open gtop.xcodeproj",
+    "build": "xcodebuild -scheme gtop build",
+    "test": "xcodebuild -scheme gtop test",
+    "lint": "swiftlint"
+  },
+  "project_constraints": [
+    "keep the utility lightweight and low-overhead while monitoring system state",
+    "keep monitoring local-only unless outbound transmission is explicitly needed",
+    "avoid requiring background or auto-start behavior unless the product clearly needs it"
+  ],
+  "rule_strengths": {
+    "change_guardrails": "guided",
+    "verification_policy": "enforced",
+    "approval_policy": "guided",
+    "project_constraints": "guided",
+    "communication_tone": "advisory"
+  },
+  "communication_tone": "concise",
+  "stack_summary": [
+    "swift"
+  ],
+  "environment": {
+    "development": "local workstation",
+    "runtime": "macOS",
+    "primary_os": "macOS"
+  },
+  "change_history": [
+    {
+      "date": "2026-04-19",
+      "change": "initial bootstrap interview started",
+      "target": "communication_language",
+      "reason": "confirmed default collaboration language as Korean"
+    },
+    {
+      "date": "2026-04-19",
+      "change": "confirmed project type and product direction",
+      "target": "project_type",
+      "reason": "normalized the project as the nearest interactive-app category and recorded the native macOS utility context"
+    },
+    {
+      "date": "2026-04-19",
+      "change": "confirmed default completion gate",
+      "target": "definition_of_done",
+      "reason": "set the local default completion expectation to require passing test and lint checks"
+    },
+    {
+      "date": "2026-04-19",
+      "change": "confirmed change posture",
+      "target": "change_posture",
+      "reason": "allowed broad refactors and aggressive restructuring when they help the project"
+    },
+    {
+      "date": "2026-04-19",
+      "change": "applied safe-default security guardrails",
+      "target": "change_guardrails",
+      "reason": "user was unsure, so the harness set minimal defaults for permissions, background behavior, data transmission, and secret handling"
+    },
+    {
+      "date": "2026-04-19",
+      "change": "confirmed verification policy",
+      "target": "verification_policy",
+      "reason": "set the default repository verification rule to always require test and lint"
+    },
+    {
+      "date": "2026-04-19",
+      "change": "confirmed approval policy",
+      "target": "approval_policy",
+      "reason": "normalized the user's preference for autonomous progress into the safe-edits-can-proceed default"
+    },
+    {
+      "date": "2026-04-19",
+      "change": "recorded initial stack direction",
+      "target": "stack_summary",
+      "reason": "captured the user's preference to build the macOS utility in Swift"
+    },
+    {
+      "date": "2026-04-19",
+      "change": "completed command and environment defaults",
+      "target": "project_commands, project_constraints, rule_strengths, communication_tone, environment",
+      "reason": "filled the remaining harness defaults with safe macOS Swift utility conventions based on the interview answers"
+    }
+  ],
+  "notes": [
+    "Inherited browser policy from parent AGENTS.md: prefer OpenChrome first for browser work and E2E; use Playwright directly when an existing Playwright runner is the natural path.",
+    "Product direction: gtop is a small macOS GUI utility that monitors CPU, memory, and network status in a compact window.",
+    "project_type is normalized to 'webapp' as the nearest stable interactive-app category in this harness schema; the actual target is a native macOS GUI utility.",
+    "Definition of done currently requires test and lint to pass. Add typecheck later if the chosen stack/tooling implies a typed workflow.",
+    "Change posture is aggressive: substantial refactors are acceptable when they materially improve the utility.",
+    "Safe-default sensitive areas for this macOS utility: system permissions, background or auto-start behavior, outbound transmission/telemetry, and any secret handling.",
+    "Verification policy is required: test and lint are mandatory for completion.",
+    "Approval policy is autonomy-friendly for this new project: safe edits can proceed directly, while explicitly sensitive changes remain subject to the configured guardrails.",
+    "Initial stack direction: build the native macOS utility in Swift.",
+    "Default commands assume an Xcode project and scheme named `gtop`; update the command strings once the actual project structure exists.",
+    "No separate typecheck command is set yet; Swift compile/build already provides type checking, and an extra typecheck command can be added later if the toolchain warrants it."
+  ]
+}
