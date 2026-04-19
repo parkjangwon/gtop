@@ -32,7 +32,7 @@ final class AppCoordinator: SettingsPresenting {
 
     private var globalOutsideClickMonitor: Any?
     private let appVersion =
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.1.0"
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0"
 
     func start() {
         monitorService.start()
