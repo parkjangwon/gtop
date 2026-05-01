@@ -110,7 +110,7 @@ final class AppCoordinator: SettingsPresenting {
             return
         }
 
-        hudController.hide()
+        hudController.hide(persistVisibility: false)
         refreshMenuBarState()
     }
 

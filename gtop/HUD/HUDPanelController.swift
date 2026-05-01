@@ -102,10 +102,12 @@ final class HUDPanelController: NSObject, NSWindowDelegate {
         onStateChange?(currentState)
     }
 
-    func hide() {
+    func hide(persistVisibility: Bool = true) {
         panel.orderOut(nil)
         currentState.isVisible = false
-        persist()
+        if persistVisibility {
+            persist()
+        }
         onStateChange?(currentState)
     }
 
