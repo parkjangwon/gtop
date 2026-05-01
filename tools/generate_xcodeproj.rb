@@ -25,8 +25,8 @@ def apply_common_settings(target, bundle_id:)
     config.build_settings["CODE_SIGN_IDENTITY"] = ""
     config.build_settings["PRODUCT_BUNDLE_IDENTIFIER"] = bundle_id
     config.build_settings["GENERATE_INFOPLIST_FILE"] = "YES"
-    config.build_settings["MARKETING_VERSION"] = "1.0.0"
-    config.build_settings["CURRENT_PROJECT_VERSION"] = "1"
+    config.build_settings["MARKETING_VERSION"] = "1.0.1"
+    config.build_settings["CURRENT_PROJECT_VERSION"] = "2"
   end
 end
 

@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5EA1A81C2C5045028428F02F"
+               BlueprintIdentifier = "E3B3D9827DBB0814051F9DCE"
                BuildableName = "gtop.app"
                BlueprintName = "gtop"
                ReferencedContainer = "container:gtop.xcodeproj">
@@ -28,7 +28,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "72C1B35C6F9AA5FD7CFACE38"
+               BlueprintIdentifier = "0C210DFA8E058240C6A1CB28"
                BuildableName = "gtopCore.framework"
                BlueprintName = "gtopCore"
                ReferencedContainer = "container:gtop.xcodeproj">
@@ -44,7 +44,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5EA1A81C2C5045028428F02F"
+            BlueprintIdentifier = "E3B3D9827DBB0814051F9DCE"
             BuildableName = "gtop.app"
             BlueprintName = "gtop"
             ReferencedContainer = "container:gtop.xcodeproj">
@@ -55,7 +55,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "35C6EF8F89050B8669898B64"
+               BlueprintIdentifier = "E5423BE1D7886417A9526E58"
                BuildableName = "gtopTests.xctest"
                BlueprintName = "gtopTests"
                ReferencedContainer = "container:gtop.xcodeproj">
@@ -77,7 +77,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5EA1A81C2C5045028428F02F"
+            BlueprintIdentifier = "E3B3D9827DBB0814051F9DCE"
             BuildableName = "gtop.app"
             BlueprintName = "gtop"
             ReferencedContainer = "container:gtop.xcodeproj">
@@ -94,7 +94,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5EA1A81C2C5045028428F02F"
+            BlueprintIdentifier = "E3B3D9827DBB0814051F9DCE"
             BuildableName = "gtop.app"
             BlueprintName = "gtop"
             ReferencedContainer = "container:gtop.xcodeproj">
