@@ -5,9 +5,43 @@ struct HUDView: View {
     @ObservedObject var monitorService: SystemMonitorService
     @ObservedObject var viewState: HUDViewState
     let appVersion: String
+    let onToggleMode: () -> Void
     @State private var presentedSection: ResourceSection?
 
     var body: some View {
+        content
+            .padding(viewState.mode == .standard ? 14 : 8)
+            .frame(width: viewState.mode == .standard ? 320 : 244)
+            .background(panelBackground)
+            .overlay(
+                Rectangle()
+                    .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
+            )
+            .compositingGroup()
+            .shadow(color: .black.opacity(0.32), radius: 18, y: 12)
+            .animation(.easeInOut(duration: 0.16), value: viewState.mode)
+            .popover(item: $presentedSection, arrowEdge: .leading) { section in
+                ProcessListPopover(
+                    section: section,
+                    entries: monitorService.processEntries(for: section)
+                )
+                .onAppear {
+                    monitorService.refreshProcessEntries(for: section)
+                }
+            }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        switch viewState.mode {
+        case .standard:
+            standardContent
+        case .mini:
+            miniContent
+        }
+    }
+
+    private var standardContent: some View {
         VStack(alignment: .leading, spacing: 12) {
             header
             VStack(spacing: 10) {
@@ -20,24 +54,13 @@ struct HUDView: View {
                 hintsSection
             }
         }
-        .padding(14)
-        .frame(width: 320)
-        .background(panelBackground)
-        .overlay(
-            Rectangle()
-                .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
+    }
+
+    private var miniContent: some View {
+        MiniHUDContent(
+            monitorService: monitorService,
+            onToggleMode: onToggleMode
         )
-        .compositingGroup()
-        .shadow(color: .black.opacity(0.32), radius: 18, y: 12)
-        .popover(item: $presentedSection, arrowEdge: .leading) { section in
-            ProcessListPopover(
-                section: section,
-                entries: monitorService.processEntries(for: section)
-            )
-            .onAppear {
-                monitorService.refreshProcessEntries(for: section)
-            }
-        }
     }
 
     private var header: some View {
@@ -52,30 +75,19 @@ struct HUDView: View {
                         .foregroundStyle(secondaryText)
                 }
                 Spacer()
-                statusBadge
+                HStack(spacing: 6) {
+                    HUDStatusBadge(isAlwaysOnTop: viewState.isAlwaysOnTop)
+                    HUDModeToggleButton(
+                        mode: viewState.mode,
+                        onToggleMode: onToggleMode
+                    )
+                }
             }
 
             Text(monitorService.snapshot.capturedAt.formatted(date: .omitted, time: .standard))
                 .font(.system(size: 10, weight: .medium))
                 .foregroundStyle(secondaryText)
         }
-    }
-
-    private var statusBadge: some View {
-        Text(viewState.isAlwaysOnTop ? "FOREGROUND" : "UTILITY")
-            .font(.system(size: 9, weight: .bold, design: .rounded))
-            .foregroundStyle(primaryText)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 5)
-            .background(
-                Capsule()
-                    .fill(viewState.isAlwaysOnTop ? Color.accentColor.opacity(0.36) : Color.white.opacity(0.12))
-            )
-            .overlay(
-                Capsule()
-                    .stroke(Color.white.opacity(0.06), lineWidth: 0.8)
-            )
-            .clipShape(Capsule())
     }
 
     private var cpuCard: some View {
@@ -238,59 +250,6 @@ struct HUDView: View {
     }
 }
 
-private struct ProcessListPopover: View {
-    let section: ResourceSection
-    let entries: [ProcessUsageEntry]
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("\(section.title) Top Processes")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(Color.white.opacity(0.96))
-
-            if entries.isEmpty {
-                Text("No processes to display.")
-                    .font(.system(size: 12))
-                    .foregroundStyle(Color.white.opacity(0.68))
-            } else {
-                ForEach(entries) { entry in
-                    HStack(alignment: .top, spacing: 12) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(entry.name)
-                                .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(Color.white.opacity(0.96))
-                            Text("PID \(entry.pid)")
-                                .font(.system(size: 10))
-                                .foregroundStyle(Color.white.opacity(0.56))
-                        }
-                        Spacer()
-                        VStack(alignment: .trailing, spacing: 2) {
-                            Text(entry.primaryValueText)
-                                .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(Color.white.opacity(0.96))
-                            Text(entry.secondaryValueText)
-                                .font(.system(size: 10))
-                                .foregroundStyle(Color.white.opacity(0.68))
-                        }
-                    }
-                    .padding(.vertical, 4)
-                }
-            }
-        }
-        .padding(14)
-        .frame(width: 300)
-        .background(
-            Rectangle()
-                .fill(Color(red: 0.08, green: 0.09, blue: 0.11).opacity(0.98))
-                .overlay(
-                    Rectangle()
-                        .stroke(Color.white.opacity(0.08), lineWidth: 1)
-                )
-        )
-        .preferredColorScheme(.dark)
-    }
-}
-
 private struct MetricCard: View {
     let title: String
     let primary: String
@@ -310,13 +269,19 @@ private struct MetricCard: View {
             }
             Text(primary)
                 .font(.system(size: 21, weight: .semibold))
+                .monospacedDigit()
                 .foregroundStyle(Color.white.opacity(0.96))
+                .frame(width: primaryValueWidth, alignment: .leading)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
             Text(secondary)
                 .font(.system(size: 11))
+                .monospacedDigit()
                 .foregroundStyle(Color.white.opacity(0.72))
                 .lineLimit(2)
+        }
+        .transaction { transaction in
+            transaction.animation = nil
         }
         .padding(12)
         .background(
@@ -327,6 +292,10 @@ private struct MetricCard: View {
                         .stroke(Color.white.opacity(0.08), lineWidth: 0.8)
                 )
         )
+    }
+
+    private var primaryValueWidth: CGFloat {
+        title == "Network" ? 220 : 76
     }
 }
 

@@ -10,6 +10,7 @@ final class HUDPanel: NSPanel {
 @MainActor
 final class HUDViewState: ObservableObject {
     @Published var isAlwaysOnTop = false
+    @Published var mode: HUDMode = .standard
 }
 
 @MainActor
@@ -18,11 +19,11 @@ final class HUDPanelController: NSObject, NSWindowDelegate {
     let preferencesStore: HUDPreferencesStore
     let panel: HUDPanel
     let viewState = HUDViewState()
-    let defaultSize = CGSize(width: 320, height: 420)
+    let defaultSize = HUDPanelController.size(for: .standard)
 
     var onStateChange: ((HUDState) -> Void)?
 
-    private(set) var currentState = HUDState(isVisible: true, isAlwaysOnTop: false)
+    private(set) var currentState = HUDState(isVisible: true, isAlwaysOnTop: false, mode: .standard)
     private var currentScreenIdentifier: String?
 
     init(
@@ -42,7 +43,14 @@ final class HUDPanelController: NSObject, NSWindowDelegate {
 
         super.init()
 
-        let rootView = HUDView(monitorService: monitorService, viewState: viewState, appVersion: appVersion)
+        let rootView = HUDView(
+            monitorService: monitorService,
+            viewState: viewState,
+            appVersion: appVersion,
+            onToggleMode: { [weak self] in
+                self?.toggleMode()
+            }
+        )
         let hostingView = NSHostingView(rootView: rootView.preferredColorScheme(.dark))
         hostingView.wantsLayer = true
         hostingView.layer?.backgroundColor = NSColor.clear.cgColor
@@ -119,6 +127,11 @@ final class HUDPanelController: NSObject, NSWindowDelegate {
         onStateChange?(currentState)
     }
 
+    func toggleMode() {
+        let nextMode: HUDMode = currentState.mode == .standard ? .mini : .standard
+        setMode(nextMode)
+    }
+
     func windowDidMove(_ notification: Notification) {
         updateCurrentScreen()
         persist()
@@ -132,6 +145,8 @@ final class HUDPanelController: NSObject, NSWindowDelegate {
     }
 
     private func restore(using preferences: HUDPreferences) {
+        currentState.mode = preferences.mode
+        viewState.mode = preferences.mode
         let screens = NSScreen.screens.map(\.visibleFrame)
         let fallback = screenForIdentifier(preferences.screenIdentifier)?.visibleFrame
             ?? activeScreen()?.visibleFrame
@@ -141,7 +156,7 @@ final class HUDPanelController: NSObject, NSWindowDelegate {
             savedFrame: preferences.frame,
             screens: screens,
             fallbackScreen: fallback,
-            size: defaultSize
+            size: Self.size(for: preferences.mode)
         )
         panel.setFrame(resolved, display: true)
         currentScreenIdentifier = preferences.screenIdentifier ?? screenIdentifier(for: resolved)
@@ -152,9 +167,49 @@ final class HUDPanelController: NSObject, NSWindowDelegate {
             frame: panel.frame,
             isVisible: currentState.isVisible,
             isAlwaysOnTop: currentState.isAlwaysOnTop,
+            mode: currentState.mode,
             screenIdentifier: currentScreenIdentifier
         )
         preferencesStore.save(preferences)
+    }
+
+    private func setMode(_ mode: HUDMode) {
+        guard currentState.mode != mode else { return }
+        currentState.mode = mode
+        viewState.mode = mode
+        resizePanel(for: mode)
+        persist()
+        onStateChange?(currentState)
+    }
+
+    private func resizePanel(for mode: HUDMode) {
+        let size = Self.size(for: mode)
+        let currentFrame = panel.frame
+        let proposedOrigin = CGPoint(
+            x: currentFrame.maxX - size.width,
+            y: currentFrame.maxY - size.height
+        )
+        let visibleFrame = NSScreen.screens
+            .first(where: { $0.visibleFrame.intersects(currentFrame) })?
+            .visibleFrame
+        let resolvedOrigin = visibleFrame.map {
+            CGPoint(
+                x: min(max(proposedOrigin.x, $0.minX), $0.maxX - size.width),
+                y: min(max(proposedOrigin.y, $0.minY), $0.maxY - size.height)
+            )
+        } ?? proposedOrigin
+
+        panel.setFrame(CGRect(origin: resolvedOrigin, size: size), display: true, animate: true)
+        updateCurrentScreen()
+    }
+
+    private static func size(for mode: HUDMode) -> CGSize {
+        switch mode {
+        case .standard:
+            return CGSize(width: 320, height: 420)
+        case .mini:
+            return CGSize(width: 244, height: 142)
+        }
     }
 
     private func activeScreen() -> NSScreen? {

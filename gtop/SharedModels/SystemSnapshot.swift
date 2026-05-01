@@ -123,13 +123,20 @@ public struct ResourceHistory: Codable, Equatable, Sendable {
     public static let empty = ResourceHistory(cpuUsage: [], downloadBytesPerSecond: [], uploadBytesPerSecond: [])
 }
 
+public enum HUDMode: String, Codable, Equatable, Sendable {
+    case standard
+    case mini
+}
+
 public struct HUDState: Codable, Equatable, Sendable {
     public var isVisible: Bool
     public var isAlwaysOnTop: Bool
+    public var mode: HUDMode
 
-    public init(isVisible: Bool, isAlwaysOnTop: Bool) {
+    public init(isVisible: Bool, isAlwaysOnTop: Bool, mode: HUDMode = .standard) {
         self.isVisible = isVisible
         self.isAlwaysOnTop = isAlwaysOnTop
+        self.mode = mode
     }
 }
 
